@@ -8,30 +8,31 @@ const form = document.querySelector('#inputForm');
 const submitButton = document.querySelector('#useValues');
 
 // Add event listener for the nodes in the form
-form.addEventListener('change', (e) => respondToChange(e));
 form.addEventListener('submit', (e) => respondToChange(e));
+
+// If you want to have it update without pressing the "Submit"
 //form.addEventListener('input', (e) => respondToChange(e));
 
 function respondToChange(e) {
+    // Stop event bubbling up, mostly for "submit" button
     e.preventDefault();
-    console.log(e.target.id + " " + e.target.value);
-    console.log(`${form['firstValue'].value} ${form['secondValue'].value} ${form['amountValue'].value}`)
+
+    // Make it a number from a string
+    const firstValue = Number(form['firstValue'].value);
+    const secondValue = Number(form['secondValue'].value);
+    const amountValue = Number(form['amountValue'].value);
+    
     switch (e.target.id) {
         case "inputForm":
-            console.log("SUBMIT");
-            //
-            const firstValue = Number(form['firstValue'].value);
-            const secondValue = Number(form['secondValue'].value);
-            const amountValue = Number(form['amountValue'].value);
             if(isIntegers(firstValue, secondValue, amountValue)) {
-                console.log("ALL INTEGERS");
                 displayResult(bishBosh(firstValue, secondValue, amountValue));
-            } else {
-                console.log("Nope");
-            }
+            };
             break;
     
         default:
+            // if(isIntegers(firstValue, secondValue, amountValue)) {
+            //     displayResult(bishBosh(firstValue, secondValue, amountValue));
+            // };
             break;
     }
 }
@@ -49,6 +50,15 @@ function isIntegers(...argsToCheck) {
 function displayResult(resultArray) {
     // Clear previous result
     display.innerHTML = '';
+
+    // If empty, inform user
+    if(resultArray.length == 0) {
+        emptyResultInfo = document.createElement("div");
+        emptyResultInfo.classList.add('text-danger');
+        emptyResultInfo.innerHTML = "inget resultat, kontrollera talen";
+        display.appendChild(emptyResultInfo);
+        return;
+    }
 
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
