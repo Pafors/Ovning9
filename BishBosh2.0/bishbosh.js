@@ -47,17 +47,8 @@ function isIntegers(...argsToCheck) {
 
 // Display the received array in the display area
 function displayResult(resultArray) {
+    // Clear previous result
     display.innerHTML = '';
-
-    //resultArray.forEach(r => display.innerHTML += `${r}\n`);
-
-    // resultArray.forEach(r => {
-    //     let newElement = document.createElement('div');
-    //     newElement.innerHTML=r;
-    //     newElement.classList.add('fadeIn');
-    //     display.appendChild(newElement);
-        
-    // });
 
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
@@ -66,23 +57,20 @@ function displayResult(resultArray) {
         resultRow.classList.add('row');
         let resultCol = document.createElement('div');
         resultCol.classList.add('col');
+        resultCol.classList.add('result');
         resultCol.innerHTML=r;
         resultRow.appendChild(resultCol);
         resultHolder.appendChild(resultRow);
     });
+
+    // And add it to the node
     display.appendChild(resultHolder);
 }
-
-
-
-// btn1.addEventListener('click', functionName);
-// let h1 = document.createElement('h1');
-// h1.innerText = 'Hej';
-// someNode.appendChild(h1)
 
 // Bish-bosh function
 function bishBosh(first, second, nn)
 {
+    // Holder of the result
     let resultArray = [];
     
     // Check that it's a number
