@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="sv">
+
+<head>
+  <title>Bish-Bosh 2.0</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+  <header class="bg-secondary py-2">
+    <h1 class="display-6">Bish-Bosh 2.0</h1>
+  </header>
+
+  <main class="container">
+    <section>
+
+      <div class="card my-2">
+        <div class="card-header">
+          Information
+        </div>
+        <div class="card-body">
+
+          <p class="card-text">Bish-bosh går igenom alla tal mellan 1 och det du anger i antal. Om talet är jämt delbart
+            med första delar-siffran så skrivs "Bish" ut, är det jämt delbart med andra delar-siffran skrivs "Bosh" ut
+            och om siffran är jämt delbart med båda två skrivs "Bish-Bosh". Om inget matchas så skrivs talet ut.
+          </p>
+
+        </div>
+      </div>
+
+    </section>
+    <section>
+      <form id="inputForm" class="row gx-3 gy-2 align-items-end">
+
+        <div class="col-sm">
+          <div class="mb-3">
+            <label for="firstValue" class="form-label">Ange första delar-siffran</label>
+            <input type="number" class="form-control" name="firstValue" id="firstValue" placeholder="Första siffran">
+          </div>
+        </div>
+
+        <div class="col-sm">
+          <div class="mb-3">
+            <label for="secondValue" class="form-label">Ange andra delar-siffran</label>
+            <input type="number" class="form-control" name="secondValue" id="secondValue" placeholder="Andra siffran">
+          </div>
+        </div>
+
+        <div class="col-sm">
+          <div class="mb-3">
+            <label for="amountValue" class="form-label">Ange antal</label>
+            <input type="number" class="form-control" name="amountValue" id="amountValue" placeholder="Antal">
+          </div>
+        </div>
+
+        <div class="col-auto">
+          <div class="mb-3">
+            <button id="useValues" type="submit" class="btn btn-primary">Submit</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <section id="displayResult"></section>
+
+  </main>
+
+  <footer class="bg-secondary py-2">
+    <div class="row">
+      <div class="col">Copyright 2022 Patric</div>
+    </div>
+  </footer>
+  <pre>
+En andra implementation: Bish-Bosh 2.0
+
+Nu skall ni skriva om Bish-Bosh med ett visuellt gränssnitt och presentation på en
+HTML-sida. Ni skall även låta en användare sätta indata, alltså:
+Vilken siffra som är Bish (tidigare 3), vilken siffra som är Bosh (tidigare 4) och hur långt
+loopen skall gå (tidigare 100) inga negativa värden tillåts.
+
+● Det skall användas variabler för:
+  ○ Loop tal (alltså vart loopen ska sluta)
+  ○ Första divisionstal (det som ska ersättas med Bish)
+  ○ Andra divisionstal (det som ska ersättas med Bosh)
+● Ett webbaserat UI som innehåller:
+  ○ Inputfält för ovanstående variabler
+  ○ En header (Bish-Bosh 2.0)
+  ○ En footer med ert namn och copyright
+  ○ En text som förklarar 'Bish-Bosh' och i vilket syfte ni skapat sidan.
+  ○ En presentation av talen
+</pre>
+
+
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+    integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous" defer>
+    </script>
+  <script src="./bishbosh.js" defer></script>
+</body>
+
+</html>
