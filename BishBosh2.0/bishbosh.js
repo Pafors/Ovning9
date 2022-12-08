@@ -16,21 +16,24 @@ form.addEventListener('submit', (e) => respondToChange(e));
 function respondToChange(e) {
     // Stop event bubbling up, mostly for "submit" button
     e.preventDefault();
-
     // Make it a number from a string
     const firstValue = Number(form['firstValue'].value);
     const secondValue = Number(form['secondValue'].value);
     const amountValue = Number(form['amountValue'].value);
-    
+
     switch (e.target.id) {
         case "inputForm":
-            if(isIntegers(firstValue, secondValue, amountValue)) {
+            // Submit button is pressed
+            if (isPositiveIntegers(firstValue, secondValue, amountValue)) {
                 displayResult(bishBosh(firstValue, secondValue, amountValue));
+            } else {
+                displayError("Felaktiva invärden, kontrollera dem");
             };
             break;
-    
+
         default:
-            // if(isIntegers(firstValue, secondValue, amountValue)) {
+            // If any other field in the forms are changed, update the result
+            // if(isPositiveIntegers(firstValue, secondValue, amountValue)) {
             //     displayResult(bishBosh(firstValue, secondValue, amountValue));
             // };
             break;
@@ -38,73 +41,75 @@ function respondToChange(e) {
 }
 
 // Validation that all the arguments are integers
-function isIntegers(...argsToCheck) {
+function isPositiveIntegers(...argsToCheck) {
     for (const arg of argsToCheck) {
-        if(!Number.isInteger(arg))
-        { return false; }
+        console.log(arg);
+        if (!Number.isInteger(arg)) { return false; }
+        if (arg < 0) { return false; }
     }
     return true;
+}
+
+function displayError(errorText) {
+    // Clear previous result
+    display.innerHTML = '';
+    emptyResultInfo = document.createElement("div");
+    emptyResultInfo.classList.add('text-danger');
+    emptyResultInfo.innerHTML = errorText;
+    display.appendChild(emptyResultInfo);
 }
 
 // Display the received array in the display area
 function displayResult(resultArray) {
     // Clear previous result
     display.innerHTML = '';
-
     // If empty, inform user
-    if(resultArray.length == 0) {
-        emptyResultInfo = document.createElement("div");
-        emptyResultInfo.classList.add('text-danger');
-        emptyResultInfo.innerHTML = "inget resultat, kontrollera talen";
-        display.appendChild(emptyResultInfo);
+    if (resultArray.length == 0) {
+        displayError("inget resultat, kontrollera talen");
         return;
     }
-
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
     resultArray.forEach(r => {
+        // Make a row
         let resultRow = document.createElement('div');
         resultRow.classList.add('row');
+        // Make a column 
         let resultCol = document.createElement('div');
         resultCol.classList.add('col');
         resultCol.classList.add('result');
-        resultCol.innerHTML=r;
+        resultCol.innerHTML = r;
+        // Add column to row
         resultRow.appendChild(resultCol);
+        // Add row to holder
         resultHolder.appendChild(resultRow);
     });
-
     // And add it to the node
     display.appendChild(resultHolder);
 }
 
 // Bish-bosh function
-function bishBosh(first, second, nn)
-{
+function bishBosh(first, second, nn) {
     // Holder of the result
     let resultArray = [];
-    
+
     // Check that it's a number
-    if(!Number.isInteger(first) || !Number.isInteger(second) || !Number.isInteger(nn)) {
+    if (!Number.isInteger(first) || !Number.isInteger(second) || !Number.isInteger(nn)) {
         return resultArray;
     }
 
     // Iterate and push each result into an result array
-    for (let i = 1; i <= nn; i++)
-    {
-        if (i % first == 0 && i % second == 0)
-        {
+    for (let i = 1; i <= nn; i++) {
+        if (i % first == 0 && i % second == 0) {
             resultArray.push("Bish-Bosh");
         }
-        else if (i % first == 0)
-        {
+        else if (i % first == 0) {
             resultArray.push("Bish");
         }
-        else if (i % second == 0)
-        {
+        else if (i % second == 0) {
             resultArray.push("Bosh");
         }
-        else
-        {
+        else {
             resultArray.push(i);
         }
     }

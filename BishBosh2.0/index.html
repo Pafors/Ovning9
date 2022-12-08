@@ -12,7 +12,7 @@
 </head>
 
 <body>
-  
+
   <header class="container-fluid bg-secondary py-2 text-white">
     <h1 class="">Bish-Bosh 2.0</h1>
   </header>
@@ -40,37 +40,40 @@
         </div>
         <div class="card-body">
 
-      <form id="inputForm" class="row gx-3 gy-2 align-items-end">
+          <form id="inputForm" class="row gx-3 gy-2 align-items-end">
 
-        <div class="col-sm">
-          <div class="mb-3">
-            <label for="firstValue" class="form-label">Ange första divisionstal</label>
-            <input type="number" class="form-control" name="firstValue" id="firstValue" placeholder="Första siffran">
-          </div>
-        </div>
+            <div class="col-sm">
+              <div class="mb-3">
+                <label for="firstValue" class="form-label">Ange första divisionstal</label>
+                <input type="number" min="0" class="form-control" name="firstValue" id="firstValue"
+                  placeholder="Första siffran">
+              </div>
+            </div>
 
-        <div class="col-sm">
-          <div class="mb-3">
-            <label for="secondValue" class="form-label">Ange andra divisionstal</label>
-            <input type="number" class="form-control" name="secondValue" id="secondValue" placeholder="Andra siffran">
-          </div>
-        </div>
+            <div class="col-sm">
+              <div class="mb-3">
+                <label for="secondValue" class="form-label">Ange andra divisionstal</label>
+                <input type="number" min="0" class="form-control" name="secondValue" id="secondValue"
+                  placeholder="Andra siffran">
+              </div>
+            </div>
 
-        <div class="col-sm">
-          <div class="mb-3">
-            <label for="amountValue" class="form-label">Ange antal</label>
-            <input type="number" class="form-control" name="amountValue" id="amountValue" placeholder="Antal">
-          </div>
-        </div>
+            <div class="col-sm">
+              <div class="mb-3">
+                <label for="amountValue" class="form-label">Ange antal</label>
+                <input type="number" min="0" class="form-control" name="amountValue" id="amountValue"
+                  placeholder="Antal">
+              </div>
+            </div>
 
-        <div class="col-auto">
-          <div class="mb-3">
-            <button id="useValues" type="submit" class="btn btn-dark">Submit</button>
-          </div>
+            <div class="col-auto">
+              <div class="mb-3">
+                <button id="useValues" type="submit" class="btn btn-dark">Submit</button>
+              </div>
+            </div>
+          </form>
         </div>
-      </form>
-    </div>
-  </div>
+      </div>
 
     </section>
 
