@@ -10,8 +10,11 @@ const simpleStorage = function () {
     let storageSpace = new Map();
     let nextID = 0;
     return {
-        setItem(value) {
+        addItem(value) {
             return storageSpace.set(nextID++, value);
+        },
+        setItem(key, value) {
+            storageSpace.set(this.getNextID(), value);
         },
         getItem(key) {
             return storageSpace.get(key);
@@ -41,8 +44,12 @@ const complexStorage = function (databaseName) {
     }
     return {
         getItems() { return storageSpace; },
-        setItem(value) {
+        addItem(value) {
             // Store in the Map and in local storage
+            storageSpace.set(this.getNextID(), value);
+            return this.save();
+        },
+        setItem(key, value) {
             storageSpace.set(this.getNextID(), value);
             return this.save();
         },
@@ -62,7 +69,6 @@ const complexStorage = function (databaseName) {
         },
         save() {
             // Handles the conversion from Map to Array to JSON, since Map:s can't be JSON:ified
-
             localStorage.setItem(databaseName, JSON.stringify(Array.from(storageSpace)));
         },
         getNextID() {
@@ -70,8 +76,8 @@ const complexStorage = function (databaseName) {
             for (const key of storageSpace.keys()) {
                 keys.push(Number(key));
             }
-            // Return max number found, or 1 (0+1) if "keys" are empty
-            return Math.max(...keys, 0) + 1;
+            // Return max stringified number found in stored key array, or 1 (0+1) if "keys" are empty
+            return (Math.max(...keys, 0) + 1).toString();
         }
     }
 }
@@ -89,9 +95,9 @@ else {
 
 
 // XXX TEMP XXX
-longTermStorage.setItem({ itemName: "newItem1", purchased: false });
-longTermStorage.setItem({ itemName: "newItem2", purchased: false });
-longTermStorage.setItem({ itemName: "newItem3", purchased: false });
+longTermStorage.addItem({ itemName: "newItem1", purchased: false });
+longTermStorage.addItem({ itemName: "newItem2", purchased: false });
+longTermStorage.addItem({ itemName: "newItem3", purchased: false });
 console.debug("localStorage loaded with temps");
 
 
@@ -125,7 +131,7 @@ function addNewItem(e) {
     switch (e.target.id) {
         // Submit button is pressed
         case "inputForm":
-            longTermStorage.setItem(
+            longTermStorage.addItem(
                 {
                     itemName: newItem,
                     purchased: false
@@ -162,9 +168,19 @@ function handleItem(e) {
             if(e.target.dataset.action === "greytag") {
                 // TOGGLE CLASS
                 // XXX KEEP IN DATABASE AND SHOW BELOW
-                e.target.classList.toggle("strikeThrough");
-                let itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                let item = longTermStorage.getItem(itemID);
                 console.log(itemID);
+                console.log(item);
+                if(item.purchased) {
+                    e.target.classList.remove("strikeThrough");
+                    item.purchased = false;
+                } else {
+                    e.target.classList.add("strikeThrough");
+                    item.purchased = true;
+                }
+                
+                longTermStorage.setItem(itemID, item);
                 console.log("WIIIIIIIIIIIIIIII");
             }
         default:
@@ -220,12 +236,13 @@ function displayItems(items) {
         // Make a bootstrap card
         let itemCard = document.createElement('div');
         itemCard.classList.add('card');
+        const strikeThrough = item.purchased ? "strikeThrough" : "";
         itemCard.innerHTML = 
         `
             <div class="card-body" data-itemid="${key}">
                 <div class="row">
                     <div class="col">
-                        <p class="card-text" data-action="greytag">${item.itemName}</p>
+                        <p class="card-text ${strikeThrough}" data-action="greytag">${item.itemName}</p>
                     </div>
                     <div class="col-auto">
                         <button type="submit" data-action="remove" class="btn btn-warning btn-sm">TABORT</button>
