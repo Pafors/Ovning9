@@ -4,6 +4,7 @@ let longTermStorage;
 // Name of database in storage
 let databaseName = "ToDo-list";
 
+// XXX TEST SIMPLE STORAGE
 // Simple storage solution for temp storage if localStorage isn't available
 const simpleStorage = function () {
     let storageSpace = new Map();
@@ -88,9 +89,9 @@ else {
 
 
 // XXX TEMP XXX
-longTermStorage.setItem({ itemName: "newItem1",  purchased: false });
-longTermStorage.setItem({ itemName: "newItem2",  purchased: false });
-longTermStorage.setItem({ itemName: "newItem3",  purchased: false });
+longTermStorage.setItem({ itemName: "newItem1", purchased: false });
+longTermStorage.setItem({ itemName: "newItem2", purchased: false });
+longTermStorage.setItem({ itemName: "newItem3", purchased: false });
 console.debug("localStorage loaded with temps");
 
 
@@ -103,15 +104,17 @@ const display = document.querySelector('#displayItems');
 const form = document.querySelector('#inputForm');
 
 // Add event listener for the nodes in the form
-form.addEventListener('submit', (e) => respondToChange(e));
+form.addEventListener('submit', (e) => addNewItem(e));
 
 // Add event listener for the nodes in the items list
-display.addEventListener('click', (e) => respondToChange(e));
+display.addEventListener('click', (e) => handleItem(e));
 
 // Show the items from start
 displayItems(longTermStorage.getItems());
 
-function respondToChange(e) {
+
+
+function addNewItem(e) {
     // Stop event bubbling up, mostly for "submit" button
     e.preventDefault();
 
@@ -129,17 +132,46 @@ function respondToChange(e) {
                 }
             );
             break;
-
-        default:
-            console.log(e.target.name);
-            // If any other field in the forms are changed, update the result
-            // if(isPositiveIntegers(firstValue, secondValue, amountValue)) {
-            //     displayItems(bishBosh(firstValue, secondValue, amountValue));
-            // };
+         default:
+            console.log("---");
+            console.log(e.target);
+            console.log(e.target.id);
+            console.log("---");
             break;
     }
     // After any change, display the todo-list
     displayItems(longTermStorage.getItems());
+}
+
+function handleItem(e) {
+    // Stop event bubbling up, mostly for "submit" button
+    e.preventDefault();
+
+    switch (e.target.tagName) {
+
+        case "BUTTON":
+            if(e.target.dataset.action === "remove") {
+                // XXX REMOVE
+                console.log("WOOOO");
+                // After any change, display the todo-list
+                // XXX Needed? Remove from DOM directly?
+                displayItems(longTermStorage.getItems());
+            }
+
+        case "P":
+            if(e.target.dataset.action === "greytag") {
+                // TOGGLE CLASS
+                // XXX KEEP IN DATABASE AND SHOW BELOW
+                e.target.classList.toggle("strikeThrough");
+                let itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                console.log(itemID);
+                console.log("WIIIIIIIIIIIIIIII");
+            }
+        default:
+            break;
+    }
+    
+    
 }
 
 
@@ -175,22 +207,41 @@ function displayItems(items) {
 
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
+    // Make a row
+    let resultRow = document.createElement('div');
+    resultRow.classList.add('row');
+    // Iterate through all items and add them
     items.forEach((item, key, map) => {
-        // Make a row
-        let resultRow = document.createElement('div');
-        resultRow.classList.add('row');
-
         // Make a column 
         let resultCol = document.createElement('div');
-        resultCol.classList.add('col');
-        resultCol.dataset.itemid = key;
-        resultCol.innerHTML = item.itemName;
+        resultCol.classList.add('col-4');
+        resultCol.classList.add('p-2');
+
+        // Make a bootstrap card
+        let itemCard = document.createElement('div');
+        itemCard.classList.add('card');
+        itemCard.innerHTML = 
+        `
+            <div class="card-body" data-itemid="${key}">
+                <div class="row">
+                    <div class="col">
+                        <p class="card-text" data-action="greytag">${item.itemName}</p>
+                    </div>
+                    <div class="col-auto">
+                        <button type="submit" data-action="remove" class="btn btn-warning btn-sm">TABORT</button>
+                    </div>
+                </div>
+            </div>
+        `
+        // Add card to column
+        resultCol.appendChild(itemCard);
 
         // Add column to row
         resultRow.appendChild(resultCol);
-        // Add row to holder
-        resultHolder.appendChild(resultRow);
+
     });
+    // Add row to holder
+    resultHolder.appendChild(resultRow);
     // And add it to the node
     display.appendChild(resultHolder);
 }
