@@ -14,7 +14,7 @@ const simpleStorage = function () {
             return storageSpace.set(nextID++, value);
         },
         setItem(key, value) {
-            storageSpace.set(this.getNextID(), value);
+            storageSpace.set(key, value);
         },
         getItem(key) {
             return storageSpace.get(key);
@@ -50,7 +50,7 @@ const complexStorage = function (databaseName) {
             return this.save();
         },
         setItem(key, value) {
-            storageSpace.set(this.getNextID(), value);
+            storageSpace.set(key, value);
             return this.save();
         },
         getItem(key) {
@@ -94,15 +94,6 @@ else {
 }
 
 
-// XXX TEMP XXX
-longTermStorage.addItem({ itemName: "newItem1", purchased: false });
-longTermStorage.addItem({ itemName: "newItem2", purchased: false });
-longTermStorage.addItem({ itemName: "newItem3", purchased: false });
-console.debug("localStorage loaded with temps");
-
-
-
-
 // Get reference on where to place the result
 const display = document.querySelector('#displayItems');
 
@@ -137,8 +128,11 @@ function addNewItem(e) {
                     purchased: false
                 }
             );
+            e.target.reset();
+
             break;
          default:
+            // XXX DEBUG REMOVE
             console.log("---");
             console.log(e.target);
             console.log(e.target.id);
@@ -157,21 +151,16 @@ function handleItem(e) {
 
         case "BUTTON":
             if(e.target.dataset.action === "remove") {
-                // XXX REMOVE
+                const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                longTermStorage.removeItem(itemID);
                 console.log("WOOOO");
                 // After any change, display the todo-list
-                // XXX Needed? Remove from DOM directly?
                 displayItems(longTermStorage.getItems());
             }
-
         case "P":
             if(e.target.dataset.action === "greytag") {
-                // TOGGLE CLASS
-                // XXX KEEP IN DATABASE AND SHOW BELOW
                 const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
                 let item = longTermStorage.getItem(itemID);
-                console.log(itemID);
-                console.log(item);
                 if(item.purchased) {
                     e.target.classList.remove("strikeThrough");
                     item.purchased = false;
@@ -202,24 +191,14 @@ function displayError(errorText) {
 
 // Display the received array in the display area
 function displayItems(items) {
-    console.log(items);
-
     // Clear previous result
     display.innerHTML = '';
 
     // If empty, inform user
     if (items.size == 0) {
-        displayError("inget resultat, kontrollera talen");
+        displayError("(tomt)");
         return;
     }
-
-    // 3. När varan har lagts till ska man ha möjlighet att markera varan som inköpt genom
-    // att klicka på varan.
-    // Texten blir då överstruken samt elementet ändrar bakgrundsfärg.
-    // 4. Det ska gå att ångra att varan blev tillagd.
-    // Texten återgår då från överstruken till normal samt elementet återfår sin
-    // ursprungliga färg.
-    // 5. Det ska även finnas en möjlighet att ta bort varan helt från listan.
 
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
