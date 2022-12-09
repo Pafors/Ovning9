@@ -4,14 +4,14 @@ let longTermStorage;
 // Name of database in storage
 let databaseName = "ToDo-list";
 
-// XXX TEST SIMPLE STORAGE
 // Simple storage solution for temp storage if localStorage isn't available
 const simpleStorage = function () {
     let storageSpace = new Map();
     let nextID = 0;
     return {
+        getItems() { return storageSpace; },
         addItem(value) {
-            return storageSpace.set(nextID++, value);
+            return storageSpace.set((nextID++).toString(), value);
         },
         setItem(key, value) {
             storageSpace.set(key, value);
@@ -20,7 +20,10 @@ const simpleStorage = function () {
             return storageSpace.get(key);
         },
         removeItem(key) {
-            return storageSpace.delete(key);
+            console.log(storageSpace);
+            //return storageSpace.delete(key);
+            storageSpace.delete(key);
+            console.log(storageSpace);return;
         },
         clearDb() {
             return storageSpace.clear();
@@ -31,9 +34,7 @@ const simpleStorage = function () {
 const complexStorage = function (databaseName) {
     let storageSpace;
 
-    // XXX
     dataArray = JSON.parse(localStorage.getItem(databaseName));
-
 
     if (dataArray == null) {
         console.log("NULL MAKE NEW MAP");
@@ -93,7 +94,6 @@ else {
     longTermStorage = simpleStorage();
 }
 
-
 // Get reference on where to place the result
 const display = document.querySelector('#displayItems');
 
@@ -108,8 +108,6 @@ display.addEventListener('click', (e) => handleItem(e));
 
 // Show the items from start
 displayItems(longTermStorage.getItems());
-
-
 
 function addNewItem(e) {
     // Stop event bubbling up, mostly for "submit" button
@@ -179,7 +177,6 @@ function handleItem(e) {
     
 }
 
-
 function displayError(errorText) {
     // Clear previous result
     display.innerHTML = '';
@@ -241,8 +238,6 @@ function displayItems(items) {
     // And add it to the node
     display.appendChild(resultHolder);
 }
-
-
 
 // This code snippet is from Mozilla as a way to check if browser can store data locally
 function storageAvailable(type) {
