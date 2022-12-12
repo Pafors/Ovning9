@@ -21,6 +21,9 @@ const display = document.querySelector('#displayItems');
 // Get reference to the form
 const form = document.querySelector('#inputForm');
 
+// Get reference for the number of items tag
+const numberOfItems = document.querySelector('#amount');
+
 // Add event listener for the nodes in the form
 form.addEventListener('submit', (e) => addNewItem(e));
 
@@ -127,8 +130,13 @@ function displayItems(items) {
     // If empty, inform user
     if (items.size == 0) {
         displayError("(tomt)");
+        // Clear the number of items display
+        numberOfItems.innerHTML="";
         return;
     }
+
+    // Update the number of items in the list
+    numberOfItems.innerHTML = `(${items.size.toString()} st)`;
 
     // Make a holder DIV to prevent redrawing of DOM for each new node added
     let resultHolder = document.createElement('div');
