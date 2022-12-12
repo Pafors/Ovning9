@@ -1,97 +1,18 @@
-// Placeholders for storage
-let longTermStorage;
+// This will handle storage of items
+let storage;
 
 // Name of database in storage
 let databaseName = "ToDo-list";
 
-// Simple storage solution for temp storage if localStorage isn't available
-const simpleStorage = function () {
-    let storageSpace = new Map();
-    let nextID = 0;
-    return {
-        getItems() { return storageSpace; },
-        addItem(value) {
-            return storageSpace.set((nextID++).toString(), value);
-        },
-        setItem(key, value) {
-            storageSpace.set(key, value);
-        },
-        getItem(key) {
-            return storageSpace.get(key);
-        },
-        removeItem(key) {
-            console.log(storageSpace);
-            //return storageSpace.delete(key);
-            storageSpace.delete(key);
-            console.log(storageSpace);return;
-        },
-        clearDb() {
-            return storageSpace.clear();
-        }
-    }
-}
-
-const complexStorage = function (databaseName) {
-    let storageSpace;
-
-    dataArray = JSON.parse(localStorage.getItem(databaseName));
-
-    if (dataArray == null) {
-        console.log("NULL MAKE NEW MAP");
-        storageSpace = new Map();
-    } else {
-        // storageSpace = new Map(dataArray.map(a => [a.key, a.value]));
-        storageSpace = new Map(dataArray);
-    }
-    return {
-        getItems() { return storageSpace; },
-        addItem(value) {
-            // Store in the Map and in local storage
-            storageSpace.set(this.getNextID(), value);
-            return this.save();
-        },
-        setItem(key, value) {
-            storageSpace.set(key, value);
-            return this.save();
-        },
-        getItem(key) {
-            // Get value from Map 
-            return storageSpace.get(key)
-        },
-        removeItem(key) {
-            // Remove from Map and save in local storage
-            storageSpace.delete(key)
-            return this.save();
-        },
-        clearDb() {
-            // Init new local storage
-            storageSpace = new Map();
-            return this.save();
-        },
-        save() {
-            // Handles the conversion from Map to Array to JSON, since Map:s can't be JSON:ified
-            localStorage.setItem(databaseName, JSON.stringify(Array.from(storageSpace)));
-        },
-        getNextID() {
-            let keys = [];
-            for (const key of storageSpace.keys()) {
-                keys.push(Number(key));
-            }
-            // Return max stringified number found in stored key array, or 1 (0+1) if "keys" are empty
-            return (Math.max(...keys, 0) + 1).toString();
-        }
-    }
-}
-
 // Check if localStorage is available
 if (storageAvailable('localStorage')) {
     // localStorage available, use it
-    longTermStorage = complexStorage(databaseName);
+    storage = longTermStorage(databaseName);
     // longTermStorage = localStorage;
 }
 else {
     // localStorage isn't available, use simple storage
-    longTermStorage = simpleStorage();
+    storage = shortTermStorage();
 }
 
 // Get reference on where to place the result
@@ -107,76 +28,84 @@ form.addEventListener('submit', (e) => addNewItem(e));
 display.addEventListener('click', (e) => handleItem(e));
 
 // Show the items from start
-displayItems(longTermStorage.getItems());
+displayItems(storage.getItems());
 
+// Event handler for the input form
 function addNewItem(e) {
     // Stop event bubbling up, mostly for "submit" button
     e.preventDefault();
 
-    // Get the new item from the form
-    const newItem = form['newItem'].value;
-    console.log(newItem);
+    // Get the new item from the form, remove empty spaces
+    const newItem = form['newItem'].value.trim();
+    // Filter out any HTML-tags
+    const strippedItem = newItem.replace(/<[^>]+>/g, '');
 
     switch (e.target.id) {
         // Submit button is pressed
         case "inputForm":
-            longTermStorage.addItem(
+            // Skip empty entries
+            if (strippedItem === "") { e.target.reset(); return; }
+            storage.addItem(
                 {
-                    itemName: newItem,
+                    itemName: strippedItem,
                     purchased: false
                 }
             );
+            // Clear the input form
             e.target.reset();
-
             break;
-         default:
-            // XXX DEBUG REMOVE
-            console.log("---");
-            console.log(e.target);
-            console.log(e.target.id);
-            console.log("---");
+        default:
+            // Inform that something that is unhandled was received
+            console.log(`*** UNHANDLED TARGET: ${e.target}`);
             break;
     }
     // After any change, display the todo-list
-    displayItems(longTermStorage.getItems());
+    displayItems(storage.getItems());
 }
 
+// Event handler for the items list
 function handleItem(e) {
     // Stop event bubbling up, mostly for "submit" button
     e.preventDefault();
 
     switch (e.target.tagName) {
-
         case "BUTTON":
-            if(e.target.dataset.action === "remove") {
+            // Check that it's the "remove" button that was pressed
+            if (e.target.dataset.action === "remove") {
+                // Find the datafield with the ID of the item
                 const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
-                longTermStorage.removeItem(itemID);
-                console.log("WOOOO");
+                // Remove the item from storage
+                storage.removeItem(itemID);
                 // After any change, display the todo-list
-                displayItems(longTermStorage.getItems());
+                displayItems(storage.getItems());
             }
         case "P":
-            if(e.target.dataset.action === "greytag") {
+            // Check that it was the text of the item that was clicked
+            if (e.target.dataset.action === "greytag") {
+                // Find the datafield with the ID of the item
                 const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
-                let item = longTermStorage.getItem(itemID);
-                if(item.purchased) {
+                // Toggle the visual appearence of the item, and the data of purchased or not
+                // (this could be done a little shorter with a class "toggle",
+                //  and a simple boolean "item=!item", but that can get out of sync)
+                let item = storage.getItem(itemID);
+                if (item.purchased) {
                     e.target.classList.remove("strikeThrough");
                     item.purchased = false;
                 } else {
                     e.target.classList.add("strikeThrough");
                     item.purchased = true;
                 }
-                
-                longTermStorage.setItem(itemID, item);
-                console.log("WIIIIIIIIIIIIIIII");
+                // Update the item in storage
+                storage.setItem(itemID, item);
             }
         default:
             break;
     }
-    
-    
+
+
 }
 
+// Simple error informer
 function displayError(errorText) {
     // Clear previous result
     display.innerHTML = '';
@@ -213,8 +142,8 @@ function displayItems(items) {
         let itemCard = document.createElement('div');
         itemCard.classList.add('card');
         const strikeThrough = item.purchased ? "strikeThrough" : "";
-        itemCard.innerHTML = 
-        `
+        itemCard.innerHTML =
+            `
             <div class="card-body" data-itemid="${key}">
                 <div class="row">
                     <div class="col">
@@ -238,6 +167,105 @@ function displayItems(items) {
     // And add it to the node
     display.appendChild(resultHolder);
 }
+
+// Long term storage using localStorage, a persistant storage
+function longTermStorage(databaseName) {
+    // The "storageSpace" is stored in the local storage under the key of "databaseName" (set above).
+    let storageSpace;
+
+    // Get data from localstorage, since it's stored as JSON, parse it
+    dataArray = JSON.parse(localStorage.getItem(databaseName));
+
+    // If nothing is stored, initialize new Map
+    if (dataArray == null) {
+        console.log("NULL MAKE NEW MAP");
+        storageSpace = new Map();
+    } else {
+        storageSpace = new Map(dataArray);
+    }
+    // Return a closure with the methods needed, and a place to store the data until stored in the local storage
+    return {
+        // Returns all items, as a Map
+        getItems() { return storageSpace; },
+        // Add one new item to the database, and save all in local storage
+        addItem(value) {
+            // Store in the Map and in local storage
+            storageSpace.set(this.getNextID(), value);
+            return this.save();
+        },
+        // Update item, and save all in local storage
+        setItem(key, value) {
+            storageSpace.set(key, value);
+            return this.save();
+        },
+        // Return an item
+        getItem(key) {
+            return storageSpace.get(key)
+        },
+        // Remove an item
+        removeItem(key) {
+            // Remove from Map and save in local storage, and save all in local storage
+            storageSpace.delete(key)
+            return this.save();
+        },
+        // Clear the complete set of items, and save all in local storage
+        clearDb() {
+            // Init new local storage
+            storageSpace = new Map();
+            return this.save();
+        },
+        // Saves the "storageSpace" Map in local storage
+        save() {
+            // Handles the conversion from Map to Array to JSON, since Map:s can't be JSON:ified
+            localStorage.setItem(databaseName, JSON.stringify(Array.from(storageSpace)));
+        },
+        // Finds the next ID to use for an item
+        getNextID() {
+            let keys = [];
+            for (const key of storageSpace.keys()) {
+                keys.push(Number(key));
+            }
+            // Return max stringified number found in stored key array, or 1 (0+1) if "keys" are empty
+            return (Math.max(...keys, 0) + 1).toString();
+        }
+    }
+}
+
+// Simple short tem storage solution if localStorage isn't available
+function shortTermStorage() {
+    let storageSpace = new Map();
+    let nextID = 0;
+    return {
+        // Returns all items, as a Map
+        getItems() { return storageSpace; },
+        // Add one new item to the database
+        addItem(value) {
+            return storageSpace.set((nextID++).toString(), value);
+        },
+        // Update item
+        setItem(key, value) {
+            storageSpace.set(key, value);
+        },
+        // Return an item
+        getItem(key) {
+            return storageSpace.get(key);
+        },
+        // Remove an item
+        removeItem(key) {
+            console.log(storageSpace);
+            //return storageSpace.delete(key);
+            storageSpace.delete(key);
+            console.log(storageSpace); return;
+        },
+        // Clear the complete set of items,
+        clearDb() {
+            return storageSpace.clear();
+        }
+    }
+}
+
+// **********************************
+// *** Below code is from Mozilla ***
 
 // This code snippet is from Mozilla as a way to check if browser can store data locally
 function storageAvailable(type) {
