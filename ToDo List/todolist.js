@@ -83,7 +83,7 @@ function handleItem(e) {
                 // Find the datafield with the ID of the item
                 const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
                 // Remove the item from storage
-                storage.removeItem(itemID);
+                storage.removeItem(Number(itemID));
                 // After any change, display the todo-list
                 displayItems(storage.getItems());
             }
@@ -97,7 +97,7 @@ function handleItem(e) {
                 // Toggle the visual appearence of the item card, and the data of purchased or not
                 // (this could be done a little shorter with a class "toggle",
                 //  and a simple boolean "item=!item", but that can get out of sync)
-                let item = storage.getItem(itemID);
+                let item = storage.getItem(Number(itemID));
                 if (item.purchased) {
                     clickedCardBody.parentNode.classList.remove('bg-secondary');
                     e.target.classList.remove('strikeThrough');
@@ -108,7 +108,7 @@ function handleItem(e) {
                     item.purchased = true;
                 }
                 // Update the item in storage
-                storage.setItem(itemID, item);
+                storage.setItem(Number(itemID), item);
             }
         default:
             break;
@@ -202,15 +202,25 @@ class Item {
 function longTermStorage(databaseName) {
     // The "storageSpace" is stored in the local storage under the key of "databaseName" (set above).
     let storageSpace;
-
+    
+    // The next ID in line of beeing used
+    let nextID;
     // Get data from localstorage, since it's stored as JSON, parse it
     dataArray = JSON.parse(localStorage.getItem(databaseName));
 
     // If nothing is stored, initialize new Map
     if (dataArray == null) {
         storageSpace = new Map();
+        nextID = 1;
     } else {
         storageSpace = new Map(dataArray);
+        // Finds the next ID to use for an item, also store it in nextID for new items
+        let keys = [];
+        for (const key of storageSpace.keys()) {
+            keys.push(Number(key));
+        }
+        // Max number found in stored key array, or 1 (0+1) if "keys" are empty
+        nextID = (Math.max(...keys, 0) + 1);
     }
     // Return a closure with the methods needed, and a place to store the data until stored in the local storage
     return {
@@ -219,7 +229,7 @@ function longTermStorage(databaseName) {
         // Add one new item to the database, and save all in local storage
         addItem(value) {
             // Store in the Map and in local storage
-            storageSpace.set(this.getNextID(), value);
+            storageSpace.set(nextID++, value);
             return this.save();
         },
         // Update item, and save all in local storage
@@ -247,16 +257,9 @@ function longTermStorage(databaseName) {
         save() {
             // Handles the conversion from Map to Array to JSON, since Map:s can't be JSON:ified
             localStorage.setItem(databaseName, JSON.stringify(Array.from(storageSpace)));
-        },
-        // Finds the next ID to use for an item
-        getNextID() {
-            let keys = [];
-            for (const key of storageSpace.keys()) {
-                keys.push(Number(key));
-            }
-            // Return max stringified number found in stored key array, or 1 (0+1) if "keys" are empty
-            return (Math.max(...keys, 0) + 1).toString();
         }
+        
+
     }
 }
 
@@ -269,7 +272,7 @@ function shortTermStorage() {
         getItems() { return storageSpace; },
         // Add one new item to the database
         addItem(value) {
-            return storageSpace.set((nextID++).toString(), value);
+            return storageSpace.set(nextID++, value);
         },
         // Update item
         setItem(key, value) {
