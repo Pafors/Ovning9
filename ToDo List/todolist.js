@@ -164,6 +164,7 @@ function displayItems(items) {
     display.appendChild(resultHolder);
 }
 
+// Item bootstrap card factory function
 function createCard(key, item) {
     // Make a column 
     let resultCol = document.createElement('div');
@@ -177,7 +178,7 @@ function createCard(key, item) {
     const strikeThrough = item.purchased ? 'strikeThrough' : '';
     if (item.purchased) { itemCard.classList.add('bg-secondary') };
     itemCard.innerHTML =
-        `
+    `
         <div class="card-body" data-itemid="${key}">
             <div class="row">
                 <div class="col">
@@ -290,8 +291,8 @@ function shortTermStorage() {
     }
 }
 
-// **********************************
-// *** Below code is from Mozilla ***
+// *****************************************
+// *** Below code is copied from Mozilla ***
 
 // This code snippet is from Mozilla as a way to check if browser can store data locally
 function storageAvailable(type) {
