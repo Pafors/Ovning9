@@ -83,15 +83,19 @@ function handleItem(e) {
             // Check that it was the text of the item that was clicked
             if (e.target.dataset.action === "greytag") {
                 // Find the datafield with the ID of the item
-                const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                const clickedCard = e.target.parentNode.parentNode.parentNode;
+                //const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
+                const itemID = clickedCard.dataset.itemid;
                 // Toggle the visual appearence of the item, and the data of purchased or not
                 // (this could be done a little shorter with a class "toggle",
                 //  and a simple boolean "item=!item", but that can get out of sync)
                 let item = storage.getItem(itemID);
                 if (item.purchased) {
+                    clickedCard.classList.remove('bg-secondary');
                     e.target.classList.remove("strikeThrough");
                     item.purchased = false;
                 } else {
+                    clickedCard.classList.add('bg-secondary');
                     e.target.classList.add("strikeThrough");
                     item.purchased = true;
                 }
@@ -135,7 +139,8 @@ function displayItems(items) {
     items.forEach((item, key, map) => {
         // Make a column 
         let resultCol = document.createElement('div');
-        resultCol.classList.add('col-4');
+        resultCol.classList.add('col-sm-4');
+        resultCol.classList.add('col-lg-3');
         resultCol.classList.add('p-2');
 
         // Make a bootstrap card
