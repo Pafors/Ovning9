@@ -2,7 +2,7 @@
 let storage;
 
 // Name of database in storage
-let databaseName = "ToDo-list";
+let databaseName = 'ToDo-list';
 
 // Check if localStorage is available
 if (storageAvailable('localStorage')) {
@@ -45,9 +45,9 @@ function addNewItem(e) {
 
     switch (e.target.id) {
         // Submit button is pressed
-        case "inputForm":
+        case 'inputForm':
             // Skip empty entries
-            if (strippedItem === "") { e.target.reset(); return; }
+            if (strippedItem === '') { e.target.reset(); return; }
             storage.addItem(
                 {
                     itemName: strippedItem,
@@ -72,9 +72,9 @@ function handleItem(e) {
     e.preventDefault();
 
     switch (e.target.tagName) {
-        case "BUTTON":
+        case 'BUTTON':
             // Check that it's the "remove" button that was pressed
-            if (e.target.dataset.action === "remove") {
+            if (e.target.dataset.action === 'remove') {
                 // Find the datafield with the ID of the item
                 const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
                 // Remove the item from storage
@@ -82,9 +82,9 @@ function handleItem(e) {
                 // After any change, display the todo-list
                 displayItems(storage.getItems());
             }
-        case "P":
+        case 'P':
             // Check that it was the text of the item that was clicked
-            if (e.target.dataset.action === "greytag") {
+            if (e.target.dataset.action === 'greytag') {
                 // Find the datafield with the ID of the item
                 const clickedCardBody = e.target.parentNode.parentNode.parentNode;
                 //const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
@@ -95,11 +95,11 @@ function handleItem(e) {
                 let item = storage.getItem(itemID);
                 if (item.purchased) {
                     clickedCardBody.parentNode.classList.remove('bg-secondary');
-                    e.target.classList.remove("strikeThrough");
+                    e.target.classList.remove('strikeThrough');
                     item.purchased = false;
                 } else {
                     clickedCardBody.parentNode.classList.add('bg-secondary');
-                    e.target.classList.add("strikeThrough");
+                    e.target.classList.add('strikeThrough');
                     item.purchased = true;
                 }
                 // Update the item in storage
@@ -116,7 +116,7 @@ function handleItem(e) {
 function displayError(errorText) {
     // Clear previous result
     display.innerHTML = '';
-    emptyResultInfo = document.createElement("div");
+    emptyResultInfo = document.createElement('div');
     emptyResultInfo.classList.add('text-danger');
     emptyResultInfo.innerHTML = errorText;
     display.appendChild(emptyResultInfo);
@@ -129,9 +129,9 @@ function displayItems(items) {
 
     // If empty, inform user
     if (items.size == 0) {
-        displayError("(tomt)");
+        displayError('(tomt)');
         // Clear the number of items display
-        numberOfItems.innerHTML="";
+        numberOfItems.innerHTML='';
         return;
     }
 
@@ -154,7 +154,7 @@ function displayItems(items) {
         // Make a bootstrap card
         let itemCard = document.createElement('div');
         itemCard.classList.add('card');
-        const strikeThrough = item.purchased ? "strikeThrough" : "";
+        const strikeThrough = item.purchased ? 'strikeThrough' : '';
         if (item.purchased) {itemCard.classList.add('bg-secondary')};
         itemCard.innerHTML =
             `
@@ -192,7 +192,6 @@ function longTermStorage(databaseName) {
 
     // If nothing is stored, initialize new Map
     if (dataArray == null) {
-        console.log("NULL MAKE NEW MAP");
         storageSpace = new Map();
     } else {
         storageSpace = new Map(dataArray);
