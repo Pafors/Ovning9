@@ -15,7 +15,12 @@
 
   <header>
     <div class="container py-2">
-      <h1 class="">ToDo List</h1>
+      <div class="row justify-content-between">
+        <div class="col-11">
+          <h1 class="">ToDo List</h1>
+        </div>
+        <div id="storagetype" class="col-1 text-center"></div>
+      </div>
     </div>
   </header>
 
@@ -32,8 +37,8 @@
 
             <div class="col-sm">
               <div class="mb-3">
-                <input type="text" min="0" class="form-control" name="newItem" id="newItem"
-                  placeholder="Skriv in varan" required>
+                <input type="text" min="0" class="form-control" name="newItem" id="newItem" placeholder="Skriv in varan"
+                  required>
               </div>
             </div>
 

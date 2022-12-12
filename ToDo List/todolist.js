@@ -4,25 +4,35 @@ let storage;
 // Name of database in storage
 let databaseName = 'ToDo-list';
 
-// Check if localStorage is available
-if (storageAvailable('localStorage')) {
-    // localStorage available, use it
-    storage = longTermStorage(databaseName);
-    // longTermStorage = localStorage;
-}
-else {
-    // localStorage isn't available, use simple storage
-    storage = shortTermStorage();
-}
-
 // Get reference on where to place the result
 const display = document.querySelector('#displayItems');
 
 // Get reference to the form
 const form = document.querySelector('#inputForm');
 
-// Get reference for the number of items tag
+// Get reference for the display of number of items tag
 const numberOfItems = document.querySelector('#amount');
+
+// Get reference for the display of storage type
+const storageType = document.querySelector('#storagetype');
+
+// Check if localStorage is available
+if (storageAvailable('localStorage')) {
+    // localStorage available, use it
+    storage = longTermStorage(databaseName);
+    storageType.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-database" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="left" title="Persistent storage"><path d="M4.318 2.687C5.234 2.271 6.536 2 8 2s2.766.27 3.682.687C12.644 3.125 13 3.627 13 4c0 .374-.356.875-1.318 1.313C10.766 5.729 9.464 6 8 6s-2.766-.27-3.682-.687C3.356 4.875 3 4.373 3 4c0-.374.356-.875 1.318-1.313ZM13 5.698V7c0 .374-.356.875-1.318 1.313C10.766 8.729 9.464 9 8 9s-2.766-.27-3.682-.687C3.356 7.875 3 7.373 3 7V5.698c.271.202.58.378.904.525C4.978 6.711 6.427 7 8 7s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 5.698ZM14 4c0-1.007-.875-1.755-1.904-2.223C11.022 1.289 9.573 1 8 1s-3.022.289-4.096.777C2.875 2.245 2 2.993 2 4v9c0 1.007.875 1.755 1.904 2.223C4.978 15.71 6.427 16 8 16s3.022-.289 4.096-.777C13.125 14.755 14 14.007 14 13V4Zm-1 4.698V10c0 .374-.356.875-1.318 1.313C10.766 11.729 9.464 12 8 12s-2.766-.27-3.682-.687C3.356 10.875 3 10.373 3 10V8.698c.271.202.58.378.904.525C4.978 9.71 6.427 10 8 10s3.022-.289 4.096-.777A4.92 4.92 0 0 0 13 8.698Zm0 3V13c0 .374-.356.875-1.318 1.313C10.766 14.729 9.464 15 8 15s-2.766-.27-3.682-.687C3.356 13.875 3 13.373 3 13v-1.302c.271.202.58.378.904.525C4.978 12.71 6.427 13 8 13s3.022-.289 4.096-.777c.324-.147.633-.323.904-.525Z"/></svg>';
+}
+else {
+    // localStorage isn't available, use temporary storage
+    storage = shortTermStorage();
+    storageType.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-exclamation-circle" viewBox="0 0 16 16" data-bs-toggle="tooltip" data-bs-placement="left" title="Temporary storage"><path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/><path d="M7.002 11a1 1 0 1 1 2 0 1 1 0 0 1-2 0zM7.1 4.995a.905.905 0 1 1 1.8 0l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 4.995z"/></svg>';
+}
+
+// Initialize tooltips (JavaScript code from Bootstrap)
+var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+    return new bootstrap.Tooltip(tooltipTriggerEl)
+})
 
 // Add event listener for the nodes in the form
 form.addEventListener('submit', (e) => addNewItem(e));
@@ -131,7 +141,7 @@ function displayItems(items) {
     if (items.size == 0) {
         displayError('(tomt)');
         // Clear the number of items display
-        numberOfItems.innerHTML='';
+        numberOfItems.innerHTML = '';
         return;
     }
 
@@ -165,7 +175,7 @@ function createCard(key, item) {
     let itemCard = document.createElement('div');
     itemCard.classList.add('card');
     const strikeThrough = item.purchased ? 'strikeThrough' : '';
-    if (item.purchased) {itemCard.classList.add('bg-secondary')};
+    if (item.purchased) { itemCard.classList.add('bg-secondary') };
     itemCard.innerHTML =
         `
         <div class="card-body" data-itemid="${key}">
