@@ -145,41 +145,44 @@ function displayItems(items) {
     resultRow.classList.add('row');
     // Iterate through all items and add them
     items.forEach((item, key, map) => {
-        // Make a column 
-        let resultCol = document.createElement('div');
-        resultCol.classList.add('col-sm-4');
-        resultCol.classList.add('col-lg-3');
-        resultCol.classList.add('p-2');
-
-        // Make a bootstrap card
-        let itemCard = document.createElement('div');
-        itemCard.classList.add('card');
-        const strikeThrough = item.purchased ? 'strikeThrough' : '';
-        if (item.purchased) {itemCard.classList.add('bg-secondary')};
-        itemCard.innerHTML =
-            `
-            <div class="card-body" data-itemid="${key}">
-                <div class="row">
-                    <div class="col">
-                        <p class="card-text ${strikeThrough}" data-action="greytag">${item.itemName}</p>
-                    </div>
-                    <div class="col-auto">
-                        <button type="submit" data-action="remove" class="btn btn-warning btn-sm">TABORT</button>
-                    </div>
-                </div>
-            </div>
-        `
-        // Add card to column
-        resultCol.appendChild(itemCard);
-
-        // Add column to row
-        resultRow.appendChild(resultCol);
-
+        // Add item card to row
+        resultRow.appendChild(createCard(key, item));
     });
     // Add row to holder
     resultHolder.appendChild(resultRow);
     // And add it to the node
     display.appendChild(resultHolder);
+}
+
+function createCard(key, item) {
+    // Make a column 
+    let resultCol = document.createElement('div');
+    resultCol.classList.add('col-sm-4');
+    resultCol.classList.add('col-lg-3');
+    resultCol.classList.add('p-2');
+
+    // Make a bootstrap card
+    let itemCard = document.createElement('div');
+    itemCard.classList.add('card');
+    const strikeThrough = item.purchased ? 'strikeThrough' : '';
+    if (item.purchased) {itemCard.classList.add('bg-secondary')};
+    itemCard.innerHTML =
+        `
+        <div class="card-body" data-itemid="${key}">
+            <div class="row">
+                <div class="col">
+                    <p class="card-text ${strikeThrough}" data-action="greytag">${item.itemName}</p>
+                </div>
+                <div class="col-auto">
+                    <button type="submit" data-action="remove" class="btn btn-warning btn-sm">TABORT</button>
+                </div>
+            </div>
+        </div>
+    `
+    // Add card to column
+    resultCol.appendChild(itemCard);
+    console.log(resultCol);
+    return resultCol;
 }
 
 // Long term storage using localStorage, a persistant storage
