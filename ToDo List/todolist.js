@@ -83,19 +83,19 @@ function handleItem(e) {
             // Check that it was the text of the item that was clicked
             if (e.target.dataset.action === "greytag") {
                 // Find the datafield with the ID of the item
-                const clickedCard = e.target.parentNode.parentNode.parentNode;
+                const clickedCardBody = e.target.parentNode.parentNode.parentNode;
                 //const itemID = e.target.parentNode.parentNode.parentNode.dataset.itemid;
-                const itemID = clickedCard.dataset.itemid;
-                // Toggle the visual appearence of the item, and the data of purchased or not
+                const itemID = clickedCardBody.dataset.itemid;
+                // Toggle the visual appearence of the item card, and the data of purchased or not
                 // (this could be done a little shorter with a class "toggle",
                 //  and a simple boolean "item=!item", but that can get out of sync)
                 let item = storage.getItem(itemID);
                 if (item.purchased) {
-                    clickedCard.classList.remove('bg-secondary');
+                    clickedCardBody.parentNode.classList.remove('bg-secondary');
                     e.target.classList.remove("strikeThrough");
                     item.purchased = false;
                 } else {
-                    clickedCard.classList.add('bg-secondary');
+                    clickedCardBody.parentNode.classList.add('bg-secondary');
                     e.target.classList.add("strikeThrough");
                     item.purchased = true;
                 }
@@ -147,6 +147,7 @@ function displayItems(items) {
         let itemCard = document.createElement('div');
         itemCard.classList.add('card');
         const strikeThrough = item.purchased ? "strikeThrough" : "";
+        if (item.purchased) {itemCard.classList.add('bg-secondary')};
         itemCard.innerHTML =
             `
             <div class="card-body" data-itemid="${key}">
