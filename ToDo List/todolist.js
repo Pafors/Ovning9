@@ -58,12 +58,7 @@ function addNewItem(e) {
         case 'inputForm':
             // Skip empty entries
             if (strippedItem === '') { e.target.reset(); return; }
-            storage.addItem(
-                {
-                    itemName: strippedItem,
-                    purchased: false
-                }
-            );
+            storage.addItem(new Item(strippedItem));
             // Clear the input form
             e.target.reset();
             break;
@@ -178,7 +173,7 @@ function createCard(key, item) {
     const strikeThrough = item.purchased ? 'strikeThrough' : '';
     if (item.purchased) { itemCard.classList.add('bg-secondary') };
     itemCard.innerHTML =
-    `
+        `
         <div class="card-body" data-itemid="${key}">
             <div class="row">
                 <div class="col">
@@ -192,8 +187,13 @@ function createCard(key, item) {
     `
     // Add card to column
     resultCol.appendChild(itemCard);
-    console.log(resultCol);
     return resultCol;
+}
+
+// For new items
+function Item(name, purchased = false) {
+    this.itemName = name;
+    this.purchased = purchased;
 }
 
 // Long term storage using localStorage, a persistant storage
@@ -279,10 +279,9 @@ function shortTermStorage() {
         },
         // Remove an item
         removeItem(key) {
-            console.log(storageSpace);
             //return storageSpace.delete(key);
             storageSpace.delete(key);
-            console.log(storageSpace); return;
+            return;
         },
         // Clear the complete set of items,
         clearDb() {
