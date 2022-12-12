@@ -190,10 +190,12 @@ function createCard(key, item) {
     return resultCol;
 }
 
-// For new items
-function Item(name, purchased = false) {
-    this.itemName = name;
-    this.purchased = purchased;
+// Class for new items (more for an experiment in JS-classes)
+class Item {
+    constructor(name, purchased = false) {
+        this.itemName = name;
+        this.purchased = purchased;
+    }
 }
 
 // Long term storage using localStorage, a persistant storage
